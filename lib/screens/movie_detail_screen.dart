@@ -2,7 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:movie_app/view_models/app_view_model.dart';
+import 'package:provider/provider.dart';
 
+import '../models/movie.dart';
 import '../widgets/movie_item_title.dart';
 
 class MovieDetailScreen extends StatelessWidget {
@@ -10,44 +13,50 @@ class MovieDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<AppViewModel>();
+    final selectedMovie = viewModel.getSelectedMovie();
+
     return Scaffold(
       backgroundColor: Color(0xff242A32),
       appBar: AppBar(
         backgroundColor: Color(0xff242A32),
-        titleSpacing: 24,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset("assets/icons/ic_arrow_left.svg"),
-              ),
-            ),
-            const Text(
-              "Detail",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: "Montserrat",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset("assets/icons/ic_favorite.svg"),
-            ),
-          ],
+        leading: Padding(
+          padding: EdgeInsets.all(8),
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: SvgPicture.asset("assets/icons/ic_arrow_left.svg"),
+          ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: SvgPicture.asset("assets/icons/ic_favorite.svg"),
+          ),
+        ],
+        title: const Text(
+          "Detail",
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: "Montserrat",
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
       ),
-      body: MovieDetailScreenBody(),
+      body: MovieDetailScreenBody(selectedMovie: selectedMovie),
     );
   }
 }
 
 class MovieDetailScreenBody extends StatelessWidget {
-  const MovieDetailScreenBody({super.key});
+  final Movie selectedMovie;
+
+  const MovieDetailScreenBody({super.key, required this.selectedMovie});
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +66,17 @@ class MovieDetailScreenBody extends StatelessWidget {
           SizedBox(
             width: 375,
             height: 210.94,
-            child: Image.asset(
-              "/Users/admin/Desktop/flutters/movie_app/sample_backdrop_image.png",
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                )
+              ),
+              child: Image.network(
+                "https://image.tmdb.org/t/p/w500/${selectedMovie.backdropPath}",
+              ),
             ),
           ),
           Positioned(
@@ -69,17 +87,16 @@ class MovieDetailScreenBody extends StatelessWidget {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  width: 54,
-                  height: 24,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: Row(
+                    spacing: 4,
                     children: [
                       SvgPicture.asset("assets/icons/ic_star.svg"),
                       Text(
-                        "9.5",
+                        selectedMovie.voteAverage.toString(),
                         style: TextStyle(
                           fontFamily: "Montserrat",
                           fontSize: 12,
@@ -103,17 +120,21 @@ class MovieDetailScreenBody extends StatelessWidget {
                   spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    SizedBox(
+                    Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       width: 100,
                       height: 120,
-                      child: Image.asset(
-                        "/Users/admin/Desktop/flutters/movie_app/sample_image.png",
+                      child: Image.network(
+                        "https://image.tmdb.org/t/p/w342/${selectedMovie.posterPath}",
                         fit: BoxFit.fill,
                       ),
                     ),
                     Expanded(
                       child: Text(
-                        "Spiderman No Way Home",
+                        selectedMovie.originalTitle,
                         style: TextStyle(
                           fontFamily: "Poppins",
                           fontSize: 18,
@@ -134,7 +155,7 @@ class MovieDetailScreenBody extends StatelessWidget {
                     children: [
                       MovieItemTitle(
                         iconUri: "assets/icons/ic_calendar_2.svg",
-                        title: "2021",
+                        title: selectedMovie.releaseDate.split("-")[0],
                         color: Colors.grey,
                       ),
                       SizedBox(
@@ -143,7 +164,7 @@ class MovieDetailScreenBody extends StatelessWidget {
                       ),
                       MovieItemTitle(
                         iconUri: "assets/icons/ic_clock_2.svg",
-                        title: "148 Minutes",
+                        title: "${selectedMovie.runTime} Minutes",
                         color: Colors.grey,
                       ),
                       SizedBox(
@@ -152,7 +173,7 @@ class MovieDetailScreenBody extends StatelessWidget {
                       ),
                       MovieItemTitle(
                         iconUri: "assets/icons/ic_ticket_2.svg",
-                        title: "Action",
+                        title: selectedMovie.genres[0],
                         color: Colors.grey,
                       ),
                     ],
@@ -160,7 +181,7 @@ class MovieDetailScreenBody extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 Text(
-                  "From DC Comics comes the Suicide Squad, an antihero team of incarcerated supervillains who act as deniable assets for the United States government, undertaking high-risk black ops missions in exchange for commuted prison sentences.",
+                  selectedMovie.overview,
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontSize: 12,
