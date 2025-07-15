@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/view_models/app_view_model.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/movie_item.dart';
 
@@ -7,6 +9,8 @@ class MoviesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<AppViewModel>();
+    final movies = viewModel.movies;
     return Scaffold(
       backgroundColor: Color(0xff242A32),
       body: SafeArea(
@@ -30,17 +34,25 @@ class MoviesScreen extends StatelessWidget {
                 ),
               ),
             ),
-            ...List.generate(10, (index) {
+            if(movies.isEmpty) Center(child: CircularProgressIndicator()),
+            if(movies.isNotEmpty)
+            ...List.generate(movies.length, (index) {
               return Padding(
                 padding: EdgeInsets.only(top: 24, right: 24, left: 24),
-                child: MovieItem(
-                  posterPath:
-                      "/Users/admin/Desktop/flutters/movie_app/sample_image.png",
-                  title: 'Spiderman',
-                  voteRate: '9.5',
-                  genre: 'Action',
-                  playTime: '134 minutes',
-                  releaseYear: '2019',
+                child: GestureDetector(
+                  onTap: () {
+                    viewModel.setSelectedMovie(movies[index]);
+                    Navigator.pushNamed(context, "/movie_detail");
+                  },
+                  child: MovieItem(
+                    posterPath:
+                        movies[index].posterPath,
+                    title: movies[index].originalTitle,
+                    voteRate: movies[index].voteAverage.toString(),
+                    genre: movies[index].genres[0],
+                    runTime: "${movies[index].runTime.toString().split("-")[0]} minutes",
+                    releaseDate: movies[index].releaseDate,
+                  ),
                 ),
               );
             }),

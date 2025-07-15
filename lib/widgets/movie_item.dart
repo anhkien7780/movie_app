@@ -7,17 +7,17 @@ class MovieItem extends StatelessWidget {
   final String title;
   final String voteRate;
   final String genre;
-  final String playTime;
-  final String releaseYear;
+  final String runTime;
+  final String releaseDate;
 
   const MovieItem({
     super.key,
     required this.title,
     required this.voteRate,
     required this.genre,
-    required this.playTime,
+    required this.runTime,
     required this.posterPath,
-    required this.releaseYear,
+    required this.releaseDate,
   });
 
   @override
@@ -26,13 +26,14 @@ class MovieItem extends StatelessWidget {
       width: 327,
       height: 120,
       child: Row(
-        spacing: 12.78,
+        spacing: 13,
         children: [
           Container(
-            width: 101.19,
+            width: 101,
             height: 120,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-            child: Image.asset(posterPath, fit: BoxFit.fill),
+            clipBehavior: Clip.hardEdge,
+            child: Image.network("https://image.tmdb.org/t/p/w342/$posterPath", fit: BoxFit.fill),
           ),
           Expanded(
             child: Column(
@@ -40,6 +41,8 @@ class MovieItem extends StatelessWidget {
               spacing: 14,
               children: [
                 Text(
+                  maxLines: 1,
+                  softWrap: true,
                   title,
                   style: TextStyle(
                     fontSize: 16,
@@ -65,12 +68,12 @@ class MovieItem extends StatelessWidget {
                     MovieItemTitle(
                       iconUri:
                           "/Users/admin/Desktop/flutters/movie_app/assets/icons/ic_calendar_1.svg",
-                      title: releaseYear,
+                      title: releaseDate,
                     ),
                     MovieItemTitle(
                       iconUri:
                           "/Users/admin/Desktop/flutters/movie_app/assets/icons/ic_clock_1.svg",
-                      title: playTime,
+                      title: runTime,
                     ),
                   ],
                 ),

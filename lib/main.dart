@@ -1,11 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:movie_app/screens/movie_detail_screen.dart';
 import 'package:movie_app/screens/movies_screen.dart';
+import 'package:movie_app/view_models/app_view_model.dart';
+import 'package:provider/provider.dart';
 
-main() => runApp(MyApp());
+main() => runApp(
+  ChangeNotifierProvider(create: (_) => AppViewModel()..fetchMovieData(), child: MyApp()),
+);
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
