@@ -13,9 +13,6 @@ class MovieDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<AppViewModel>();
-    final selectedMovie = viewModel.getSelectedMovie();
-
     return Scaffold(
       backgroundColor: Color(0xff242A32),
       appBar: AppBar(
@@ -48,152 +45,189 @@ class MovieDetailScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: MovieDetailScreenBody(selectedMovie: selectedMovie),
+      body: MovieDetailScreenBody(),
     );
   }
 }
 
-class MovieDetailScreenBody extends StatelessWidget {
-  final Movie selectedMovie;
+class MovieDetailScreenBody extends StatefulWidget {
+  const MovieDetailScreenBody({super.key});
 
-  const MovieDetailScreenBody({super.key, required this.selectedMovie});
+  @override
+  State<MovieDetailScreenBody> createState() => _MovieDetailScreenBodyState();
+}
+
+class _MovieDetailScreenBodyState extends State<MovieDetailScreenBody> {
+  late Future<Movie> _movieFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    int movieId = context.read<AppViewModel>().selectedMovieId;
+    _movieFuture = context.read<AppViewModel>().fetchMovie(movieId);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: Stack(
-        children: [
-          SizedBox(
-            width: 375,
-            height: 210.94,
-            child: Container(
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                )
-              ),
-              child: Image.network(
-                "https://image.tmdb.org/t/p/w500/${selectedMovie.backdropPath}",
-              ),
-            ),
-          ),
-          Positioned(
-            right: 11,
-            top: 176,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+    return FutureBuilder(
+      future: _movieFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+        if (!snapshot.hasData) {
+          return Container(
+            color: Colors.red,
+            width: double.infinity,
+            height: double.infinity,
+            child: Text("No data"),
+          );
+        }
+        final movie = snapshot.data!;
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SizedBox(
+                width: double.infinity,
+                height: 211,
                 child: Container(
+                  clipBehavior: Clip.hardEdge,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  child: Row(
-                    spacing: 4,
-                    children: [
-                      SvgPicture.asset("assets/icons/ic_star.svg"),
-                      Text(
-                        selectedMovie.voteAverage.toString(),
-                        style: TextStyle(
-                          fontFamily: "Montserrat",
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.orange,
-                        ),
-                      ),
-                    ],
+                  child: Image.network(
+                    "https://image.tmdb.org/t/p/w500/${movie.backdropPath}",
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: 151,
-            left: 24,
-            right: 24,
-            child: Column(
-              children: [
-                Row(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      width: 100,
-                      height: 120,
-                      child: Image.network(
-                        "https://image.tmdb.org/t/p/w342/${selectedMovie.posterPath}",
-                        fit: BoxFit.fill,
-                      ),
+            Positioned(
+              right: 11,
+              top: 176,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    Expanded(
-                      child: Text(
-                        selectedMovie.originalTitle,
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    child: Row(
+                      spacing: 4,
+                      children: [
+                        SvgPicture.asset("assets/icons/ic_star.svg"),
+                        Text(
+                          movie.voteAverage.toString(),
+                          style: TextStyle(
+                            fontFamily: "Montserrat",
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 151,
+              left: 24,
+              right: 24,
+              child: Column(
+                children: [
+                  Row(
+                    spacing: 10,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        width: 100,
+                        height: 120,
+                        child: Image.network(
+                          "https://image.tmdb.org/t/p/w342/${movie.posterPath}",
+                          fit: BoxFit.fill,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 12,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MovieItemTitle(
-                        iconUri: "assets/icons/ic_calendar_2.svg",
-                        title: selectedMovie.releaseDate.split("-")[0],
-                        color: Colors.grey,
-                      ),
-                      SizedBox(
-                        height: 16,
-                        child: VerticalDivider(color: Colors.grey),
-                      ),
-                      MovieItemTitle(
-                        iconUri: "assets/icons/ic_clock_2.svg",
-                        title: "${selectedMovie.runTime} Minutes",
-                        color: Colors.grey,
-                      ),
-                      SizedBox(
-                        height: 16,
-                        child: VerticalDivider(color: Colors.grey),
-                      ),
-                      MovieItemTitle(
-                        iconUri: "assets/icons/ic_ticket_2.svg",
-                        title: selectedMovie.genres[0],
-                        color: Colors.grey,
+                      Expanded(
+                        child: Text(
+                          movie.originalTitle,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 24),
-                Text(
-                  selectedMovie.overview,
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MovieItemTitle(
+                          iconUri: "assets/icons/ic_calendar_2.svg",
+                          title: movie.releaseDate.split("-")[0],
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: 16,
+                          child: VerticalDivider(color: Colors.grey),
+                        ),
+                        MovieItemTitle(
+                          iconUri: "assets/icons/ic_clock_2.svg",
+                          title: "${movie.runTime} Minutes",
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: 16,
+                          child: VerticalDivider(color: Colors.grey),
+                        ),
+                        MovieItemTitle(
+                          iconUri: "assets/icons/ic_ticket_2.svg",
+                          title: movie.genres[0],
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 24),
+                  Text(
+                    movie.overview,
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }

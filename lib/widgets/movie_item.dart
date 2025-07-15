@@ -56,23 +56,23 @@ class MovieItem extends StatelessWidget {
                   children: [
                     MovieItemTitle(
                       iconUri:
-                          "/Users/admin/Desktop/flutters/movie_app/assets/icons/ic_star.svg",
+                          "assets/icons/ic_star.svg",
                       title: voteRate,
                       color: Colors.orange,
                     ),
                     MovieItemTitle(
                       iconUri:
-                          "/Users/admin/Desktop/flutters/movie_app/assets/icons/ic_ticket_1.svg",
+                          "assets/icons/ic_ticket_1.svg",
                       title: genre,
                     ),
                     MovieItemTitle(
                       iconUri:
-                          "/Users/admin/Desktop/flutters/movie_app/assets/icons/ic_calendar_1.svg",
+                          "assets/icons/ic_calendar_1.svg",
                       title: releaseDate,
                     ),
                     MovieItemTitle(
                       iconUri:
-                          "/Users/admin/Desktop/flutters/movie_app/assets/icons/ic_clock_1.svg",
+                          "assets/icons/ic_clock_1.svg",
                       title: runTime,
                     ),
                   ],
