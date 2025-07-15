@@ -34,6 +34,16 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/icons/ic_arrow_left.svg
+    - assets/icons/ic_calendar_1.svg
+    - assets/icons/ic_calendar_2.svg
+    - assets/icons/ic_clock_1.svg
+    - assets/icons/ic_clock_2.svg
+    - assets/icons/ic_favorite.svg
+    - assets/icons/ic_star.svg
+    - assets/icons/ic_ticket_1.svg
+    - assets/icons/ic_ticket_2.svg
   uses-material-design: true
   fonts:
     - family: Poppins

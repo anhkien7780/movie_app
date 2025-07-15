@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/widgets/svg_image.dart';
 
 import 'movie_item_title.dart';
 
@@ -29,7 +28,12 @@ class MovieItem extends StatelessWidget {
       child: Row(
         spacing: 12.78,
         children: [
-          SVGImage(imageUri: posterPath),
+          Container(
+            width: 101.19,
+            height: 120,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+            child: Image.asset(posterPath, fit: BoxFit.fill),
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
