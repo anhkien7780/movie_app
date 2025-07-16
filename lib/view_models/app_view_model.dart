@@ -9,6 +9,7 @@ class AppViewModel extends ChangeNotifier {
 
   Future<void> fetchMovieData() async {
     try {
+      await Future.delayed(Duration(minutes: 1));
       _movies = await MovieServices.fetchMovie();
       notifyListeners();
     } catch (e) {
