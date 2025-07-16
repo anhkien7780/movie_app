@@ -34,7 +34,7 @@ class MovieServices {
 
   static Future<List<Movie>> fetchRandomMovies() async {
     final random = Random();
-    final randomPage = random.nextInt(500) + 1; // TMDb hỗ trợ đến 500 trang
+    final randomPage = random.nextInt(500) + 1;
 
     final uri = Uri.parse(
       "https://api.themoviedb.org/3/movie/top_rated?api_key=$_apiKey&page=$randomPage",

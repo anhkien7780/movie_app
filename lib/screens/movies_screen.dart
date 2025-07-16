@@ -69,7 +69,21 @@ class _MoviesScreenState extends State<MoviesScreen> {
                   }
                   if (snapshot.hasError) {
                     children.add(
-                      const Center(child: Text("Something went wrong")),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Center(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            "Something went wrong\n${snapshot.error}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.red,
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.w600
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   }
                   if (snapshot.hasData) {
