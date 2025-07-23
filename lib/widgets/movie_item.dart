@@ -73,7 +73,7 @@ class MovieItem extends StatelessWidget {
                     MovieItemTitle(
                       iconUri:
                           "assets/icons/ic_clock_1.svg",
-                      title: runTime,
+                      title: "$runTime minutes",
                     ),
                   ],
                 ),
