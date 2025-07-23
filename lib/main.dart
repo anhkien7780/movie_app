@@ -5,7 +5,7 @@ import 'package:movie_app/view_models/app_view_model.dart';
 import 'package:provider/provider.dart';
 
 main() => runApp(
-  ChangeNotifierProvider(create: (_) => AppViewModel()..fetchMovieData(), child: MyApp()),
+  ChangeNotifierProvider(create: (_) => AppViewModel(), child: MyApp()),
 );
 
 class MyApp extends StatelessWidget {

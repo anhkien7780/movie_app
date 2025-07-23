@@ -3,30 +3,14 @@ import 'package:movie_app/models/movie.dart';
 import 'package:movie_app/networks/movie_services.dart';
 
 class AppViewModel extends ChangeNotifier {
-
-  List<Movie> _movies = <Movie>[];
-  Movie? _selectedMovie;
-
-  Future<void> fetchMovieData() async {
-    try {
-      await Future.delayed(Duration(minutes: 1));
-      _movies = await MovieServices.fetchMovie();
-      notifyListeners();
-    } catch (e) {
-      throw Exception("Fetch movie failed $e");
-    }
+  int? _selectedMovieId;
+  int get selectedMovieId => _selectedMovieId!;
+  void setSelectedMovieId(int id) {
+    _selectedMovieId = id;
+    notifyListeners();
   }
 
-  List<Movie> get movies => _movies;
-
-  void setSelectedMovie(Movie movie) {
-    _selectedMovie = movie;
-  }
-
-  Movie getSelectedMovie() {
-    if (_selectedMovie != null) {
-      return _selectedMovie!;
-    }
-    throw Exception("_selected movie is null");
+  Future<Movie> fetchMovie(int id) async {
+    return await MovieServices.fetchMovie(id);
   }
 }
